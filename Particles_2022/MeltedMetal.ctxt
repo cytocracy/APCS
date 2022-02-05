@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=MeltedMetal
+comment1.params=initAge
+comment1.target=MeltedMetal(int)
+comment2.params=
+comment2.target=void\ incrementAge()
+comment3.params=
+comment3.target=int\ getAge()
+numComments=4

@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=HeatedWood
+comment1.params=initAge
+comment1.target=HeatedWood(int)
+comment2.params=
+comment2.target=HeatedWood()
+comment3.params=
+comment3.target=void\ incrementAge()
+comment4.params=
+comment4.target=int\ getAge()
+numComments=5
