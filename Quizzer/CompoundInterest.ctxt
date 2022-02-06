@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=CompoundInterest
+comment1.params=initInterest\ initAmount
+comment1.target=CompoundInterest(double,\ double)
+comment2.params=nYears
+comment2.target=double\ getAmountAfterNYears(int)
+comment3.params=target
+comment3.target=double\ getNForAmount(double)
+numComments=4

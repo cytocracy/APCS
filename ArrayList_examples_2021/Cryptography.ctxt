@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=Cryptography
+comment1.params=
+comment1.target=Cryptography()
+comment2.params=base\ input1
+comment2.target=java.lang.String\ base10ToBaseN(int,\ java.lang.String)
+comment3.params=base\ input
+comment3.target=java.lang.String\ baseNToBase10(int,\ java.lang.String)
+comment4.params=input\ base1\ base2
+comment4.target=java.lang.String\ baseNToBaseN(java.lang.String,\ int,\ int)
+comment5.params=c
+comment5.target=int\ val(char)
+comment6.params=index
+comment6.target=java.lang.String\ charAt(int)
+numComments=7

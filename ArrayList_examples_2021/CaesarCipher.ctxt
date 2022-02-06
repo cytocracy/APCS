@@ -1,0 +1,5 @@
+#BlueJ class context
+comment0.target=CaesarCipher
+comment1.params=text\ s
+comment1.target=java.lang.StringBuffer\ encrypt(java.lang.String,\ int)
+numComments=2

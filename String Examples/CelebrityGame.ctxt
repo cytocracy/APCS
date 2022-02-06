@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=CelebrityGame
+comment1.params=
+comment1.target=void\ run()
+comment2.params=p1\ p2\ turn1
+comment2.target=void\ playGame(java.lang.String,\ java.lang.String,\ boolean)
+comment3.params=celeb
+comment3.target=boolean\ checkGuess(java.lang.String)
+comment4.params=celeb
+comment4.target=void\ doGuesses(java.lang.String)
+numComments=5

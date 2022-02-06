@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=CleanStairs
+comment1.params=
+comment1.target=void\ run()
+comment2.params=
+comment2.target=void\ goUpOneStep()
+comment3.params=
+comment3.target=void\ turnRight()
+comment4.params=
+comment4.target=void\ endSequence()
+comment5.params=
+comment5.target=void\ spin()
+comment6.params=
+comment6.target=void\ descend()
+numComments=7

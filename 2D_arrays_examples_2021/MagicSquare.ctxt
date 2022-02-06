@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=MagicSquare
+comment1.params=
+comment1.target=void\ run()
+comment2.params=
+comment2.target=int[][]\ getRandomSquare()
+comment3.params=array
+comment3.target=void\ print2D(int[][])
+comment4.params=square
+comment4.target=boolean\ isMagic(int[][])
+numComments=5

@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=Flag
+comment1.params=
+comment1.target=void\ run()
+comment2.params=
+comment2.target=void\ createOutline()
+comment3.params=
+comment3.target=void\ createBlueSquares()
+comment4.params=
+comment4.target=void\ createWhiteGaps()
+comment5.params=
+comment5.target=void\ createRedCross()
+comment6.params=
+comment6.target=void\ createRedStripes()
+comment7.params=
+comment7.target=void\ addLabel()
+numComments=8

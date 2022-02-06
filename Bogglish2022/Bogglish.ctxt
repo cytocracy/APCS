@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=Bogglish
+comment1.params=
+comment1.target=void\ run()
+comment2.params=board
+comment2.target=void\ printAllWords(java.lang.String[][])
+comment3.params=board
+comment3.target=void\ printBoard(java.lang.String[][])
+comment4.params=word\ board
+comment4.target=boolean\ checkWord(java.lang.String,\ java.lang.String[][])
+comment4.text=\ Returns\ true\ if\ the\ word\ is\ "contained"\ somewhere\ in\ the\ board,\r\n\ \ following\ our\ "Bogglish"\ rules,\ false\ otherwise.\r\n\ \ @param\ word\ the\ word\ to\ check\r\n\ \ @param\ board\ the\ Bogglish\ board\r\n\ \ @return\ true\ if\ the\ word\ is\ in\ the\ board,\ false\ otherwise.\r\n
+comment5.params=letter\ board
+comment5.target=Position\ getLetterPosition(java.lang.String,\ java.lang.String[][])
+comment5.text=\ Returns\ the\ Position\ of\ where\ the\ letter\ is\ in\ the\ board\r\n\ \ Note\ that\ this\ returns\ a\ Position,\ which\ is\ a\ class\ you\ wrote.\r\n\ \ @param\ letter\ a\ String\ of\ length\ 1\ representing\ the\ letter\r\n\ \ @param\ board\ the\ Bogglish\ board\r\n\ \ @return\ the\ Position\ of\ the\ letter,\ or\ null\ if\ it\ is\ not\ there\ \r\n
+numComments=6
