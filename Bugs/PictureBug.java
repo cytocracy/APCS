@@ -11,6 +11,7 @@ public class PictureBug extends Bug
     {
         super();
         
+        //could have done with booleans, but 1's and 0's are shorter lol
         pictureValues = new int[][]{
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -29,6 +30,7 @@ public class PictureBug extends Bug
         Grid<Actor> gr = getGrid();
         Location loc = getLocation();
         
+        //get bug to travel across entire grid, probably could have condensed this a little bit..
         if(loc.getRow() == 0){
             
             if(loc.getCol() == 0){
@@ -62,6 +64,9 @@ public class PictureBug extends Bug
             }
         }else move();
         
+        
+        
+        //make bug blue when in correct positions for picture, white otherwise
         loc = getLocation();
         if(pictureValues[loc.getRow()][loc.getCol()] == 1)
             setColor(Color.blue);
@@ -70,4 +75,23 @@ public class PictureBug extends Bug
         
         
     }
+    
+    //override move method
+    public void move(){
+        Grid<Actor> gr = getGrid();
+        if (gr == null) return;
+        Location loc = getLocation();
+        Location next = loc.getAdjacentLocation(getDirection());
+        if(gr.isValid(next)) moveTo(next);
+        else removeSelfFromGrid();
+        
+        
+        //only leave flowers where needed for picture
+        if(pictureValues[loc.getRow()][loc.getCol()] == 1){
+            Flower flower = new Flower(getColor());
+            flower.putSelfInGrid(gr, loc);
+        }
+    }
+       
+    
 }
