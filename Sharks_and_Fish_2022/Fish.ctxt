@@ -2,4 +2,10 @@
 comment0.target=Fish
 comment1.params=
 comment1.target=Fish()
-numComments=2
+comment2.params=
+comment2.target=void\ act()
+comment3.params=actors
+comment3.target=void\ processActors(java.util.ArrayList)
+comment4.params=
+comment4.target=int\ getAge()
+numComments=5

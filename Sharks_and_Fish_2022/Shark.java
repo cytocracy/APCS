@@ -19,6 +19,8 @@ public class Shark extends Critter
         setColor(Color.black);
     }
     
-    // finish this up
+    public void processActors(ArrayList<Actor> actors){
+        int num
+    }
 
 }

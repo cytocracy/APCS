@@ -10,6 +10,7 @@ public class FemaleFish extends Fish
     
     // private instance variables
     private int turnsPregnant;
+    private boolean isPregnant;
     
     public FemaleFish()
     {
@@ -17,5 +18,35 @@ public class FemaleFish extends Fish
         setColor(Color.PINK);
     }
     
-    // finish this up
+    public void processActors(ArrayList<Actor> actors){
+        if(getAge() >= BREEDAGE && !isPregnant){
+           for(Actor a : actors){
+               if(a instanceof MaleFish){
+                   MaleFish mf = (MaleFish) a;
+                   if(mf.getAge() >= BREEDAGE){
+                       isPregnant = true;
+                       turnsPregnant = 0;
+                   }
+               } 
+            }
+        } else if (isPregnant){
+            turnsPregnant++;
+            if(turnsPregnant > GESTATIONPERIOD){
+                if(giveBirth(getLocation())){
+                    isPregnant = false;
+                }
+            }
+        }
+    }
+    
+    //return "success" of giving birth
+    public boolean giveBirth(Location momLoc){
+        //selectMoveLocation() just returns a random loc, so we can use that
+        if(getMoveLocations().size() == 0) return false;
+        Location birthLoc = selectMoveLocation(getMoveLocations());
+        Fish f = Math.random() < 0.5 ? new MaleFish() : new FemaleFish();
+        
+        f.putSelfInGrid(getGrid(), birthLoc);
+        return true;
+    }
 }
