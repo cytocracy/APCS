@@ -1,18 +1,11 @@
 #BlueJ class context
-comment0.params=
-comment0.target=void\ init()
+comment0.target=AsteroidsGame
 comment1.params=
-comment1.target=void\ makeAsteroids()
+comment1.target=void\ init()
 comment2.params=
-comment2.target=void\ run()
-comment3.params=obj
-comment3.target=Asteroid\ checkForCollisions(GVectorPolygon)
-comment4.params=e
-comment4.target=void\ keyPressed(java.awt.event.KeyEvent)
-comment5.params=e
-comment5.target=void\ mouseClicked(java.awt.event.MouseEvent)
-comment6.params=
-comment6.target=void\ shipCollided()
-comment7.params=a\ bullet
-comment7.target=void\ shotAsteroid(Asteroid,\ Bullet)
-numComments=8
+comment2.target=void\ makeAsteroids()
+comment3.params=
+comment3.target=void\ run()
+comment4.params=obj
+comment4.target=Asteroid\ checkForCollisions(GVectorPolygon)
+numComments=5

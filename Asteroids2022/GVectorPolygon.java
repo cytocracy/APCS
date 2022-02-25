@@ -10,22 +10,37 @@ public class GVectorPolygon extends GPolygon
 
     public GVectorPolygon(int windowWidth, int windowHeight)
     {
-       // to be written in version 0.1
+       super();
+       vx = 0;
+       vy = 0;
+       theta = 0;
+       maxX = windowWidth;
+       maxY = windowHeight;
     }
 
     public void increaseVelocity(double numPixels)
     {
-       // to be written in version 0.1
+        double currVelocity = Math.sqrt(vx*vx + vy*vy);
+        
+        double targetVelocity = currVelocity + numPixels > MAXVELOCITY ? MAXVELOCITY : currVelocity + numPixels;
+        vx = targetVelocity * Math.cos(Math.toRadians(theta));
+        vy = targetVelocity * Math.sin(Math.toRadians(theta));
     }
 
     public void updatePosition()
     {
-        // to be written in version 0.1
+        move(vx, vy);
+        if(getX() > maxX) setLocation(-getWidth(), getY());
+        else if(getX() < -getWidth()) setLocation(maxX, getY());
+        
+        if(getY() > maxY) setLocation(getX(), -getHeight());
+        else if(getY() < -getHeight()) setLocation(getX(), maxY);
     }
 
     public void rotate(double angle)
     {
-        // to be written in version 0.1 
+        theta += angle;
+        super.rotate(angle);
     }
 
     public double getTheta()
