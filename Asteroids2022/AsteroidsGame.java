@@ -13,7 +13,7 @@ public class AsteroidsGame extends GraphicsProgram
     private boolean playing;
     private GLabel notificationLabel, scoreLabel;
     // uncomment out the line below in version 0.4.1
-    // private Ship ship;
+    private Ship ship;
     // uncomment out the line below in version 0.5.2
     // (and don't forget to write bullets = new ArrayList<Bullet>() in the init method!)
     // private ArrayList<Bullet> bullets; 
@@ -50,12 +50,29 @@ public class AsteroidsGame extends GraphicsProgram
 
         asteroids = new ArrayList<Asteroid>();
         makeAsteroids();
+        ship = new Ship(getWidth(), getHeight());
+        
+        ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()/2 - ship.getBounds().getHeight()/2);
+        add(ship);
 
     }
 
     private void makeAsteroids()
     {
-        // code for version 0.3.1 goes here
+        for(int i=0; i<3+level; i++){
+            //System.out.println("Width: " + getWidth());
+            
+            //System.out.println("Height: " + getHeight());
+            Asteroid a = new Asteroid(getWidth(), getHeight());
+            double x = Math.random() < 0.5 ? getWidth()/2 + Math.random()*50 : getWidth()/2 - Math.random()*50;
+            double y = Math.random() < 0.5 ? getHeight()/2 + Math.random()*50 : getHeight()/2 - Math.random()*50;
+            
+            a.setLocation(x, y);
+            a.rotate(Math.random() * 360);
+            a.increaseVelocity(1);
+            asteroids.add(a);
+            add(a);
+        }
     }
 
     public void run()
@@ -64,7 +81,10 @@ public class AsteroidsGame extends GraphicsProgram
         while (true)
         {
             pause(10);
-            // code for version 0.3 goes here
+            for(Asteroid a : asteroids){
+                a.updatePosition();
+            }
+            ship.updatePosition();
         } 
     }
 
@@ -78,4 +98,31 @@ public class AsteroidsGame extends GraphicsProgram
         return null;       
     }
 
+    @Override
+    public void mouseMoved(MouseEvent e){
+        double totalTheta;
+        double turnTheta;
+
+        if(e.getX()-ship.getX() == 0){return;}        
+        totalTheta = Math.toDegrees(Math.atan((e.getY()-ship.getY())/(e.getX()-ship.getX())));
+        if(e.getX() < ship.getX()){
+            if(e.getY() <= ship.getY())totalTheta-= 180;
+            else totalTheta +=180;
+        }     
+        turnTheta = -totalTheta-ship.getTheta();
+
+        ship.rotate(turnTheta);
+    }
+    
+    @Override
+    public void keyPressed(KeyEvent e){
+        if(e.getKeyCode() == KeyEvent.VK_W){
+            System.out.println("w key pressed");
+            ship.increaseVelocity(0.5);
+        }
+    }
+    
+   
+    
+    
 }

@@ -20,21 +20,40 @@ public class GVectorPolygon extends GPolygon
 
     public void increaseVelocity(double numPixels)
     {
+        
+        
         double currVelocity = Math.sqrt(vx*vx + vy*vy);
         
         double targetVelocity = currVelocity + numPixels > MAXVELOCITY ? MAXVELOCITY : currVelocity + numPixels;
+        
         vx = targetVelocity * Math.cos(Math.toRadians(theta));
         vy = targetVelocity * Math.sin(Math.toRadians(theta));
+        
+        vy *=-1;
+        
+        
+        
+        
+        
+        
+        //vx = 
+        
+        
     }
 
     public void updatePosition()
     {
-        move(vx, vy);
-        if(getX() > maxX) setLocation(-getWidth(), getY());
-        else if(getX() < -getWidth()) setLocation(maxX, getY());
         
-        if(getY() > maxY) setLocation(getX(), -getHeight());
-        else if(getY() < -getHeight()) setLocation(getX(), maxY);
+        move(vx, vy);
+        GRectangle box = getBounds();
+        
+        //setBounds(box.setLocation(0 - box.getWidth(), box.getY()));
+        
+        if(box.getX() > maxX) move(-(maxX + box.getWidth()), 0);
+        else if(box.getX() < 0 - box.getWidth()) move(maxX + box.getWidth(), 0);
+        
+        if(getY() > maxY + box.getHeight()) move(0, -(maxY + box.getHeight()));
+        else if(box.getY() < 0 - box.getHeight()) move(0, maxY+box.getHeight());
     }
 
     public void rotate(double angle)

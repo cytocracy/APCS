@@ -8,7 +8,8 @@ public class Bullet extends GVectorPolygon
     
     public Bullet(int windowWidth, int windowHeight)
     {
-       // complete this in version 0.5
+       super(windowWidth, windowHeight);  
+    
     }
     
     // complete this in version 0.5

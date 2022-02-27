@@ -9,7 +9,7 @@ public class ShowGObject extends GraphicsProgram
 
     public void run()
     {
-        Asteroid a = new Asteroid(400, 400);
+        Ship a = new Ship(400, 400);
         a.move(100,100);
         add(a);
         
