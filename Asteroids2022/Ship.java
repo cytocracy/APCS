@@ -2,8 +2,7 @@ import java.awt.Color;
 
 public class Ship extends GVectorPolygon
 {
-
-    //private double vRotation;
+    private static final int MAXSHIPSPEED = 5;
     
     public Ship(int windowWidth, int windowHeight)
     {
@@ -13,7 +12,6 @@ public class Ship extends GVectorPolygon
         recenter();
         setColor(Color.white);
         rotate(90);
-        //vRotation = 0;
     }
     
     public void initVertices(){
@@ -29,26 +27,61 @@ public class Ship extends GVectorPolygon
         }
     }
     
-    /*public void changeRotation(boolean direction){
-        vRotation = direction ? vRotation + 1 : vRotation - 1;
-    }*/
+    public void boost(double fMagnitude){
+        applyForce(fMagnitude, getTheta());
+    }
     
-    @Override
-    public void updatePosition(){
-        /*if(vRotation > 10) vRotation = 10;
-        if(vRotation < -10) vRotation = 10;
-        */
-        /*rotate(vRotation);
-        if(vRotation > 0) vRotation --;
-        else vRotation++;*/
-        System.out.println(getTheta());
-        super.updatePosition();
+    public void brake(double fMagnitude){
+        applyForce(fMagnitude, getMovementAngle());
+    }
+    
+    public void applyForce(double fMagnitude, double angle){
+        double vxf = fMagnitude * Math.cos(Math.toRadians(angle));
+        double vyf = fMagnitude * Math.sin(Math.toRadians(angle));
         
+        double vxn = getVelocityX() + vxf;
+        double vyn = getVelocityY() + vyf;
         
+        double nMag = Math.sqrt(vxn*vxn + vyn*vyn);
+        double nTheta;
+        if(vxn == 0) nTheta = vyn>0 ? 90 : -90;
+        else nTheta = Math.toDegrees(Math.atan(vyn/vxn));
+
+        if(nMag>MAXSHIPSPEED){
+            if(vxn<0){
+                if(vyn <0) nTheta-=180;
+                else nTheta+= 180;
+            }
+            vxn = MAXSHIPSPEED * Math.cos(Math.toRadians(nTheta));
+            vyn = MAXSHIPSPEED * Math.sin(Math.toRadians(nTheta));
+        }
+        
+        setVX(vxn);
+        setVY(vyn);
     }
 
     
+    public double getMovementAngle(){
+        double velVx = getVelocityX();
+        double velVy = getVelocityY();
+        
+        if(velVx == 0) return velVy > 0 ? 90 : -90;
+        
+        double moveTheta = Math.toDegrees(Math.atan(velVy/velVx));
+        if(velVx < 0){
+            if(velVy < 0) moveTheta -=180;
+            else moveTheta += 180;
+        }
+        return moveTheta;
+    }
     
-    // you'll add a method here in version 0.5.1
-
+    public Bullet makeBullet(){
+        Bullet b = new Bullet((int) getWindowWidth(), (int) getWindowHeight());
+        b.rotate(getTheta());
+        b.setLocation(getX(), getY());
+        b.movePolar(5, getTheta());
+        b.increaseVelocity(7);
+        return b;
+    }
+    
 }

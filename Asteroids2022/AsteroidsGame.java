@@ -16,7 +16,7 @@ public class AsteroidsGame extends GraphicsProgram
     private Ship ship;
     // uncomment out the line below in version 0.5.2
     // (and don't forget to write bullets = new ArrayList<Bullet>() in the init method!)
-    // private ArrayList<Bullet> bullets; 
+    private ArrayList<Bullet> bullets; 
     private int level;
     private int ships;
     private int score;
@@ -51,22 +51,23 @@ public class AsteroidsGame extends GraphicsProgram
         asteroids = new ArrayList<Asteroid>();
         makeAsteroids();
         ship = new Ship(getWidth(), getHeight());
-        
+
         ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()/2 - ship.getBounds().getHeight()/2);
         add(ship);
 
+        bullets = new ArrayList<Bullet>();
     }
 
     private void makeAsteroids()
     {
         for(int i=0; i<3+level; i++){
             //System.out.println("Width: " + getWidth());
-            
+
             //System.out.println("Height: " + getHeight());
             Asteroid a = new Asteroid(getWidth(), getHeight());
             double x = Math.random() < 0.5 ? getWidth()/2 + Math.random()*50 : getWidth()/2 - Math.random()*50;
             double y = Math.random() < 0.5 ? getHeight()/2 + Math.random()*50 : getHeight()/2 - Math.random()*50;
-            
+
             a.setLocation(x, y);
             a.rotate(Math.random() * 360);
             a.increaseVelocity(1);
@@ -81,11 +82,50 @@ public class AsteroidsGame extends GraphicsProgram
         while (true)
         {
             pause(10);
-            for(Asteroid a : asteroids){
-                a.updatePosition();
-            }
-            ship.updatePosition();
+            updatePositions();
+            //if(checkForCollisions(ship) != null){
+              //  shipCollided();
+            //}
+            //checkBulletCollisions();
         } 
+    }
+
+    private void checkBulletCollisions(){
+        for(Bullet b: bullets){
+            Asteroid collidedAsteroid = checkForCollisions(b);
+            if(collidedAsteroid != null){
+                remove(asteroids.remove(asteroids.indexOf(collidedAsteroid)));
+                if(!(collidedAsteroid instanceof SmallAsteroid)){
+                    if(collidedAsteroid instanceof MediumAsteroid){
+                        double vectorAngle = Math.random() * 360;
+                        for(int i=0; i<3; i++){
+                            Asteroid newAstro = new SmallAsteroid(getWidth(), getHeight());
+                            newAstro.setLocation(collidedAsteroid.getX(), collidedAsteroid.getY());
+                            //newAstro.
+                        }
+                        
+                    } else{} //create medium
+                }
+            }
+        }
+    }
+    private void shipCollided(){
+        ship.resetRotation();
+        ship.rotate(90);
+        ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()/2 - ship.getBounds().getHeight()/2);
+    }
+    public void updatePositions(){
+        for(Asteroid a : asteroids){
+            a.updatePosition();
+        }
+        for(int i = 0; i<bullets.size(); i++){
+
+            if(bullets.get(i).stillMoving()) bullets.get(i).updatePosition();
+            else {
+                remove(bullets.remove(i));
+            }
+        }
+        ship.updatePosition();
     }
 
     private Asteroid checkForCollisions(GVectorPolygon obj)
@@ -113,16 +153,19 @@ public class AsteroidsGame extends GraphicsProgram
 
         ship.rotate(turnTheta);
     }
-    
+
     @Override
     public void keyPressed(KeyEvent e){
         if(e.getKeyCode() == KeyEvent.VK_W){
-            System.out.println("w key pressed");
-            ship.increaseVelocity(0.5);
+            ship.boost(1.5);
+        } else if (e.getKeyCode() == KeyEvent.VK_S){
+            ship.brake(-ship.getMagnitude()/10);
+        }else if(e.getKeyCode() == KeyEvent.VK_SPACE){
+            Bullet b = ship.makeBullet();
+            bullets.add(b);
+            add(b);
         }
     }
-    
-   
-    
+
     
 }
