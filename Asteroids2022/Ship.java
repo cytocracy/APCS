@@ -87,8 +87,20 @@ public class Ship extends GVectorPolygon
         return b;
     }
     
+    public Bullet makePointer(){
+        Bullet b = new Bullet((int) getWindowWidth(), (int) getWindowHeight(), 20);
+        b.rotate(getTheta());b.setLocation(getX(), getY());
+        b.movePolar(5, getTheta());
+        b.increaseVelocity(7);
+        return b;
+    }
+    
     public int incrementInvincibility(){
         invincibilityTime--;
         return invincibilityTime;
+    }
+    
+    public void tick(){
+        return;
     }
 }

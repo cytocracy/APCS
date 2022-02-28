@@ -9,6 +9,7 @@ public class Asteroid extends GVectorPolygon
     {
         super(windowWidth, windowHeight);
         rotation = Math.random();
+        rotation = Math.random()<0.5 ? rotation * -1 : rotation;
 
         initVertices();
         recenter();
@@ -58,5 +59,14 @@ public class Asteroid extends GVectorPolygon
     public void updatePosition(){
         rotate(rotation);
         super.updatePosition();
+    }
+    
+    public void tick(){
+        
+        double rotateAmount;
+        if(rotation > 0.5 || rotation < -0.5) rotateAmount =rotation;
+        else if(rotation< 0) rotateAmount = -0.5;
+        else rotateAmount = 0.5;
+        rotate(rotateAmount);
     }
 }

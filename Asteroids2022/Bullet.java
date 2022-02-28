@@ -3,8 +3,10 @@ import java.awt.Color;
 public class Bullet extends GVectorPolygon
 {
     private int numTurns;
+    private int lifeTurns;
     
     private static final int MAXTURNS=75;
+    
     
     public Bullet(int windowWidth, int windowHeight)
     {
@@ -13,6 +15,16 @@ public class Bullet extends GVectorPolygon
        initVertices();
        setColor(Color.white);
        setFilled(true);
+       lifeTurns = MAXTURNS;
+    }
+    
+    public Bullet(int windowWidth, int windowHeight, int lTurns){
+       super(windowWidth, windowHeight);  
+       numTurns = 0;
+       initVertices();
+       setColor(Color.white);
+       setFilled(true);
+       lifeTurns = lTurns;
     }
     
     public void initVertices(){
@@ -34,7 +46,7 @@ public class Bullet extends GVectorPolygon
     }
     
     public boolean stillMoving(){
-        return numTurns<MAXTURNS;
+        return numTurns<lifeTurns;
     }
 
 

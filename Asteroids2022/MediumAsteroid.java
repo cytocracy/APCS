@@ -9,5 +9,4 @@ public class MediumAsteroid extends Asteroid
         scale(0.5);
     }
 
-
 }
