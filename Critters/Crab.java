@@ -11,6 +11,8 @@ public class Crab extends Critter
         super();
         setColor(Color.red);
     }
+    
+    @Override
     public ArrayList<Location> getMoveLocations(){
         ArrayList<Location> result = new ArrayList<Location>();
         Location curr = getLocation();

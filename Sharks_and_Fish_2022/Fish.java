@@ -7,9 +7,9 @@ public class Fish extends Critter
 {
     // constants (note that these are "protected", so they are
     // available in subclasses of Fish)
-    protected final static int BREEDAGE = 5;
-    protected final static int OLDAGE = 15;
-    protected final static double PROBOFDYING = 0.20;
+    protected final static int BREEDAGE = 3;
+    protected final static int OLDAGE = 25;
+    protected final static double PROBOFDYING = 0.10;
 
     // private instance variables
     private int age;
@@ -30,6 +30,6 @@ public class Fish extends Critter
     
     public int getAge(){return age;}
     
-    // finish this up
+    
     
 }

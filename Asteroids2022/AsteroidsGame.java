@@ -175,12 +175,20 @@ public class AsteroidsGame extends GraphicsProgram
     }
 
     private void incrementLoadingBar(){
-        if(loadingBar.getWidth() > getWidth())return;
+        if(loadingBar.getWidth() > getWidth())startGame();
         loadingBar.setText(loadingBar.getLabel() + "_");
         loadingBar.setLocation(getWidth()/2 - loadingBar.getWidth()/2, loadingBar.getY());
         
     }
     
+    
+    public void startGame(){
+        removeAll();
+        asteroids.clear();
+        bullets.clear();
+        initGame();
+        gameState = GAME;
+    }
     private void shortenLoadingBar(){
         loadingBar.setText(loadingBar.getLabel().substring(1));
         loadingBar.setLocation(getWidth()/2 - loadingBar.getWidth()/2, loadingBar.getY());

@@ -25,6 +25,7 @@ public class FemaleFish extends Fish
                    MaleFish mf = (MaleFish) a;
                    if(mf.getAge() >= BREEDAGE){
                        isPregnant = true;
+                       setColor(Color.RED);
                        turnsPregnant = 0;
                    }
                } 
@@ -34,6 +35,7 @@ public class FemaleFish extends Fish
             if(turnsPregnant > GESTATIONPERIOD){
                 if(giveBirth(getLocation())){
                     isPregnant = false;
+                    setColor(Color.PINK);
                 }
             }
         }
