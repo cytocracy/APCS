@@ -37,7 +37,7 @@ public class AsteroidsGame extends GraphicsProgram
         gameState = MENU;
 
         setBackground(Color.BLACK);
-        
+
         bullets = new ArrayList<Bullet>();
         asteroids = new ArrayList<Asteroid>();
         keyStrokes = new HashMap<String, Boolean>();
@@ -57,8 +57,7 @@ public class AsteroidsGame extends GraphicsProgram
         scoreLabel.setColor(Color.WHITE);
         scoreLabel.setFont("Courier-Plain-10");
         scoreLabel.setLocation(16, 16);
-        
-        
+
 
         menuParts = new ArrayList<GObject>();
 
@@ -66,7 +65,7 @@ public class AsteroidsGame extends GraphicsProgram
         loadingBar.setColor(Color.white);
         loadingBar.setLocation(getWidth()/2-loadingBar.getWidth()/2, getHeight()-30);
         menuParts.add(loadingBar);
-        
+
         aTitle = new Asteroid(getWidth(), getHeight());
         aTitle.setLocation(getWidth()/2, getHeight()* 0.25);
         menuParts.add(aTitle);
@@ -104,9 +103,7 @@ public class AsteroidsGame extends GraphicsProgram
         ship.setLocation(getWidth()/2 - ship.getWidth()/2, getHeight()* 3/4 /*- ship.getBounds().getHeight()/2*/);
         menuParts.add(ship);
 
-        
         initKeyStrokes();
-
         initMenu();
     }
 
@@ -170,6 +167,10 @@ public class AsteroidsGame extends GraphicsProgram
                     }
                 }
                 if(loadingBar.getLabel().length() > 9)shortenLoadingBar();
+            } else if (gameState == RESET){
+                for(Asteroid a : asteroids){
+                    a.updatePosition();
+                }
             }
         } 
     }
@@ -178,10 +179,9 @@ public class AsteroidsGame extends GraphicsProgram
         if(loadingBar.getWidth() > getWidth())startGame();
         loadingBar.setText(loadingBar.getLabel() + "_");
         loadingBar.setLocation(getWidth()/2 - loadingBar.getWidth()/2, loadingBar.getY());
-        
+
     }
-    
-    
+
     public void startGame(){
         removeAll();
         asteroids.clear();
@@ -189,12 +189,13 @@ public class AsteroidsGame extends GraphicsProgram
         initGame();
         gameState = GAME;
     }
+
     private void shortenLoadingBar(){
         loadingBar.setText(loadingBar.getLabel().substring(1));
         loadingBar.setLocation(getWidth()/2 - loadingBar.getWidth()/2, loadingBar.getY());
-        
+
     }
-    
+
     private void initGame(){
         level = 0;
         ships = 3;
@@ -202,14 +203,13 @@ public class AsteroidsGame extends GraphicsProgram
 
         add(scoreLabel);
 
-        
         makeAsteroids();
         ship = new Ship(getWidth(), getHeight());
 
         ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()/2 - ship.getBounds().getHeight()/2);
         add(ship);
 
-        shootingCooldown = 0;
+        shootingCooldown = 50;
     }
 
     private void initMenu(){
@@ -248,7 +248,13 @@ public class AsteroidsGame extends GraphicsProgram
 
     private void shipCollided(){
         gameState = RESET;
+        for(int i=0; i<bullets.size(); i++){
+            remove(bullets.remove(i));
+            i--;
+        }
         ship.resetRotation();
+        ship.setVY(0);
+        ship.setVX(0);  
         ship.rotate(90);
         ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()/2 - ship.getBounds().getHeight()/2);
     }
