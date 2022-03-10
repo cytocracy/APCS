@@ -14,24 +14,20 @@ public class AsteroidsGame extends GraphicsProgram
     private static final int RESET = 2;
     private static final int GAMEOVER = 3;
 
-    private ArrayList<Asteroid> asteroids;
     private int gameState;
-    private GLabel notificationLabel, scoreLabel, loadingBar;
-    // uncomment out the line below in version 0.4.1
-    private Ship ship;
-    // uncomment out the line below in version 0.5.2
-    // (and don't forget to write bullets = new ArrayList<Bullet>() in the init method!)
-    private ArrayList<Bullet> bullets; 
-    private int level;
-    private int ships;
-    private int score;
-    private AudioClip thrustClip, fireClip, bigBangClip, mediumBangClip, smallBangClip;
     private HashMap<String, Boolean> keyStrokes;
+    
+    private ArrayList<Asteroid> asteroids;
+    private ArrayList<Bullet> bullets;
+    private Ship ship;
+    private int level, ships, score;
     private int shootingCooldown;
-    private Asteroid aPlay, aOptions, aTitle;
-
+    
     private ArrayList<GObject> menuParts;
-
+    private GLabel notificationLabel, scoreLabel, loadingBar;
+    private Asteroid aPlay, aOptions, aTitle;
+    private AudioClip thrustClip, fireClip, bigBangClip, mediumBangClip, smallBangClip;
+    
     public void init()
     {
         gameState = MENU;
@@ -58,9 +54,7 @@ public class AsteroidsGame extends GraphicsProgram
         scoreLabel.setFont("Courier-Plain-10");
         scoreLabel.setLocation(16, 16);
 
-
         menuParts = new ArrayList<GObject>();
-
         loadingBar = new GLabel("_________");
         loadingBar.setColor(Color.white);
         loadingBar.setLocation(getWidth()/2-loadingBar.getWidth()/2, getHeight()-30);
@@ -187,7 +181,7 @@ public class AsteroidsGame extends GraphicsProgram
         asteroids.clear();
         bullets.clear();
         initGame();
-        gameState = GAME;
+        gameState = RESET;
     }
 
     private void shortenLoadingBar(){
@@ -340,10 +334,12 @@ public class AsteroidsGame extends GraphicsProgram
                     Bullet b = ship.makeBullet();
                     bullets.add(b);
                     add(b);
-                    shootingCooldown = 5;
-                } else shootingCooldown--;
+                    shootingCooldown = 15;
+                } 
+                
 
             }
+            shootingCooldown--;
         } else if(gameState == MENU){
             if(keyStrokes.get("VK_SPACE")){
                 Bullet b = ship.makePointer();

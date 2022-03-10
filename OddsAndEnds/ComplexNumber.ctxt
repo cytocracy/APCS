@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=ComplexNumber
+comment1.params=realPart\ imagPart
+comment1.target=ComplexNumber(double,\ double)
+comment2.params=
+comment2.target=java.lang.String\ toString()
+comment3.params=other
+comment3.target=ComplexNumber\ add(ComplexNumber)
+comment4.params=other
+comment4.target=ComplexNumber\ multiply(ComplexNumber)
+comment5.params=
+comment5.target=ComplexNumber\ squared()
+numComments=6
