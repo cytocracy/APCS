@@ -335,11 +335,9 @@ public class AsteroidsGame extends GraphicsProgram
                     bullets.add(b);
                     add(b);
                     shootingCooldown = 15;
-                } 
-                
-
-            }
-            shootingCooldown--;
+                }
+            } shootingCooldown--;
+            
         } else if(gameState == MENU){
             if(keyStrokes.get("VK_SPACE")){
                 Bullet b = ship.makePointer();
