@@ -27,7 +27,293 @@ public class AsteroidsGame extends GraphicsProgram
     private GLabel notificationLabel, scoreLabel, loadingBar;
     private Asteroid aPlay, aOptions, aTitle;
     private AudioClip thrustClip, fireClip, bigBangClip, mediumBangClip, smallBangClip;
+   
+    //
+    //
+    //Runtime Methods
     
+    public void run()
+    {
+        while (true){
+            pause(10);
+            if(gameState == GAME){
+                updatePositions();
+                if(ship.incrementInvincibility() < 0 && checkForCollisions(ship) != null){
+                    shipCollided();
+                }
+                checkBulletCollisions();
+                processKeyStrokes();
+                scoreLabel.setText("Score:"+score);
+                if(asteroids.size() == 0)nextLevel();
+            } else if (gameState == MENU){
+                for(GObject obj : menuParts){
+                    if(obj instanceof Asteroid){
+                        Asteroid a = (Asteroid) obj;
+                        a.tick();
+                    }
+                }
+                processKeyStrokes();
+                for(int i = 0; i<bullets.size(); i++){
+
+                    if(bullets.get(i).stillMoving()) {
+                        bullets.get(i).updatePosition();
+                        if(checkForCollisions(bullets.get(i)) != null){
+                            Asteroid selection = checkForCollisions(bullets.get(i));
+                            incrementLoadingBar();
+                        } 
+                    }else {
+                        remove(bullets.remove(i));
+                    }
+                }
+                if(loadingBar.getLabel().length() > 9)shortenLoadingBar();
+            } else if (gameState == RESET){
+                for(Asteroid a : asteroids){
+                    a.updatePosition();
+                }
+            } else if (gameState == GAMEOVER){
+                
+            }
+        } 
+    }
+
+    public void startGame(){
+        removeAll();
+        asteroids.clear();
+        bullets.clear();
+        initGame();
+        gameState = RESET;
+    }
+    
+    private void nextLevel(){
+        gameState = RESET;
+        level++;
+        resetShip();
+        makeAsteroids();
+    }
+
+    private void gameOver(){
+        gameState = GAMEOVER;
+        removeAll();
+        
+        gameOverScreen();
+    }
+
+    private void checkBulletCollisions(){
+        for(int i=0; i<bullets.size(); i++){
+            Asteroid collidedAsteroid = checkForCollisions(bullets.get(i));
+            if(collidedAsteroid != null){
+                remove(bullets.remove(i));
+                remove(asteroids.remove(asteroids.indexOf(collidedAsteroid)));
+                if(!(collidedAsteroid instanceof SmallAsteroid)){
+                    if(collidedAsteroid instanceof MediumAsteroid) score += 50;
+                    else score += 20;
+                    double vectorAngle = Math.random() * 360;
+                    for(int j=0; j<3; j++){
+                        Asteroid newAstro = collidedAsteroid instanceof MediumAsteroid ? new SmallAsteroid(getWidth(), getHeight()) : new MediumAsteroid(getWidth(), getHeight());
+                        newAstro.setLocation(collidedAsteroid.getX(), collidedAsteroid.getY());
+                        newAstro.rotate(vectorAngle + 120*j);
+                        if(newAstro instanceof MediumAsteroid)newAstro.increaseVelocity(1.5);
+                        else newAstro.increaseVelocity(2);
+                        asteroids.add(newAstro);
+                        add(newAstro);
+                    }
+                } else score += 100;
+            }
+        }
+    }
+
+    private void shipCollided(){
+        if(ships == 0) gameOver();
+        
+        gameState = RESET;
+        for(int i=0; i<bullets.size(); i++){
+            remove(bullets.remove(i));
+            i--;
+        }
+        resetShip();
+    }
+
+    private Asteroid checkForCollisions(GVectorPolygon obj)
+    {
+        for (Asteroid a:asteroids)
+            if (a.getBounds().intersects(obj.getBounds()))
+            {
+                return a;
+            }
+        return null;       
+    }
+
+    
+    
+    //Util methods
+    public void updatePositions(){
+        for(Asteroid a : asteroids){
+            a.updatePosition();
+        }
+        for(int i = 0; i<bullets.size(); i++){
+
+            if(bullets.get(i).stillMoving()) bullets.get(i).updatePosition();
+            else {
+                remove(bullets.remove(i));
+            }
+        }
+        ship.updatePosition();
+    }
+    
+    private void localizeShip(MouseEvent e){
+        double totalTheta;
+        double turnTheta;
+
+        if(e.getX()-ship.getX() == 0){return;}        
+        totalTheta = Math.toDegrees(Math.atan((e.getY()-ship.getY())/(e.getX()-ship.getX())));
+        if(e.getX() < ship.getX()){
+            if(e.getY() <= ship.getY())totalTheta-= 180;
+            else totalTheta +=180;
+        }     
+        turnTheta = -totalTheta-ship.getTheta();
+
+        ship.rotate(turnTheta);
+    }
+
+    private void resetShip(){
+        ship.resetRotation();
+        ship.setVY(0);
+        ship.setVX(0);  
+        ship.rotate(90);
+        ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()/2 - ship.getBounds().getHeight()/2);
+    
+    }
+    
+    private void initMenu(){
+        for(GObject obj : menuParts){
+            add(obj);
+        }
+
+    }
+    
+    private void shortenLoadingBar(){
+        loadingBar.setText(loadingBar.getLabel().substring(1));
+        loadingBar.setLocation(getWidth()/2 - loadingBar.getWidth()/2, loadingBar.getY());
+
+    }
+
+    private void incrementLoadingBar(){
+        if(loadingBar.getWidth() > getWidth())startGame();
+        loadingBar.setText(loadingBar.getLabel() + "_");
+        loadingBar.setLocation(getWidth()/2 - loadingBar.getWidth()/2, loadingBar.getY());
+
+    }
+    
+    private void makeAsteroids()
+    {
+        for(int i=0; i<3+level; i++){
+            Asteroid a = new Asteroid(getWidth(), getHeight());
+            double x = Math.random() < 0.5 ? getWidth()/2 + Math.random()*50 : getWidth()/2 - Math.random()*50;
+            double y = Math.random() < 0.5 ? getHeight()/2 + Math.random()*50 : getHeight()/2 - Math.random()*50;
+
+            a.setLocation(x, y);
+            a.rotate(Math.random() * 360);
+            a.increaseVelocity(1);
+            asteroids.add(a);
+            add(a);
+        }
+    }
+    
+    private void initGame(){
+        level = 0;
+        ships = 3;
+        score = 0;
+
+        add(scoreLabel);
+
+        makeAsteroids();
+        ship = new Ship(getWidth(), getHeight());
+
+        ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()/2 - ship.getBounds().getHeight()/2);
+        add(ship);
+
+        shootingCooldown = 50;
+    }
+    
+    private void gameOverScreen(){
+        
+    }
+    
+    //
+    //
+    //
+    //Keystroke Methods
+    
+    private void initKeyStrokes(){
+        String[] keys = {
+                "VK_W",
+                "VK_S",
+                "VK_SPACE",
+            };
+
+        for(String key : keys){
+            keyStrokes.put(key, false);
+        }
+    }
+    
+    @Override
+    public void keyPressed(KeyEvent e){
+        switch(e.getKeyCode()){
+            case KeyEvent.VK_W: keyStrokes.put("VK_W", true); break;
+            case KeyEvent.VK_S: keyStrokes.put("VK_S", true); break;
+            case KeyEvent.VK_SPACE: keyStrokes.put("VK_SPACE", true); break;
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e){
+        switch(e.getKeyCode()){
+            case KeyEvent.VK_W: keyStrokes.put("VK_W", false); break;
+            case KeyEvent.VK_S: keyStrokes.put("VK_S", false); break;
+            case KeyEvent.VK_SPACE: keyStrokes.put("VK_SPACE", false); break;
+        }
+    }
+    
+    @Override
+    public void mouseMoved(MouseEvent e){
+        if(gameState == GAME){
+            localizeShip(e);
+            //for(menu)
+        } else if (gameState == MENU){
+            localizeShip(e);
+        }
+    }
+    
+    public void mouseClicked(MouseEvent e){
+        if(gameState == MENU) {
+        }else if(gameState == RESET) gameState = GAME;
+    }
+
+    private void processKeyStrokes(){
+        if(gameState == GAME){
+            if(keyStrokes.get("VK_W"))ship.boost(0.5);
+            if(keyStrokes.get("VK_S"))ship.brake(-ship.getMagnitude()/20);
+            if(keyStrokes.get("VK_SPACE")){
+                if(shootingCooldown <= 0){
+                    Bullet b = ship.makeBullet();
+                    bullets.add(b);
+                    add(b);
+                    shootingCooldown = 15;
+                }
+            } shootingCooldown--;
+            
+        } else if(gameState == MENU){
+            if(keyStrokes.get("VK_SPACE")){
+                Bullet b = ship.makePointer();
+                bullets.add(b);
+                add(b);
+            }
+        }
+
+    }
+    
+    
+    //init
     public void init()
     {
         gameState = MENU;
@@ -99,252 +385,5 @@ public class AsteroidsGame extends GraphicsProgram
 
         initKeyStrokes();
         initMenu();
-    }
-
-    private void initKeyStrokes(){
-        String[] keys = {
-                "VK_W",
-                "VK_S",
-                "VK_SPACE",
-            };
-
-        for(String key : keys){
-            keyStrokes.put(key, false);
-        }
-    }
-
-    private void makeAsteroids()
-    {
-        for(int i=0; i<3+level; i++){
-            Asteroid a = new Asteroid(getWidth(), getHeight());
-            double x = Math.random() < 0.5 ? getWidth()/2 + Math.random()*50 : getWidth()/2 - Math.random()*50;
-            double y = Math.random() < 0.5 ? getHeight()/2 + Math.random()*50 : getHeight()/2 - Math.random()*50;
-
-            a.setLocation(x, y);
-            a.rotate(Math.random() * 360);
-            a.increaseVelocity(1);
-            asteroids.add(a);
-            add(a);
-        }
-    }
-
-    public void run()
-    {
-        while (true){
-            pause(10);
-            if(gameState == GAME){
-                updatePositions();
-                if(ship.incrementInvincibility() < 0 && checkForCollisions(ship) != null){
-                    shipCollided();
-                }
-                checkBulletCollisions();
-                processKeyStrokes();
-                scoreLabel.setText("Score:"+score);
-            } else if (gameState == MENU){
-                for(GObject obj : menuParts){
-                    if(obj instanceof Asteroid){
-                        Asteroid a = (Asteroid) obj;
-                        a.tick();
-                    }
-                }
-                processKeyStrokes();
-                for(int i = 0; i<bullets.size(); i++){
-
-                    if(bullets.get(i).stillMoving()) {
-                        bullets.get(i).updatePosition();
-                        if(checkForCollisions(bullets.get(i)) != null){
-                            Asteroid selection = checkForCollisions(bullets.get(i));
-                            incrementLoadingBar();
-                        } 
-                    }else {
-                        remove(bullets.remove(i));
-                    }
-                }
-                if(loadingBar.getLabel().length() > 9)shortenLoadingBar();
-            } else if (gameState == RESET){
-                for(Asteroid a : asteroids){
-                    a.updatePosition();
-                }
-            }
-        } 
-    }
-
-    private void incrementLoadingBar(){
-        if(loadingBar.getWidth() > getWidth())startGame();
-        loadingBar.setText(loadingBar.getLabel() + "_");
-        loadingBar.setLocation(getWidth()/2 - loadingBar.getWidth()/2, loadingBar.getY());
-
-    }
-
-    public void startGame(){
-        removeAll();
-        asteroids.clear();
-        bullets.clear();
-        initGame();
-        gameState = RESET;
-    }
-
-    private void shortenLoadingBar(){
-        loadingBar.setText(loadingBar.getLabel().substring(1));
-        loadingBar.setLocation(getWidth()/2 - loadingBar.getWidth()/2, loadingBar.getY());
-
-    }
-
-    private void initGame(){
-        level = 0;
-        ships = 3;
-        score = 0;
-
-        add(scoreLabel);
-
-        makeAsteroids();
-        ship = new Ship(getWidth(), getHeight());
-
-        ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()/2 - ship.getBounds().getHeight()/2);
-        add(ship);
-
-        shootingCooldown = 50;
-    }
-
-    private void initMenu(){
-        for(GObject obj : menuParts){
-            add(obj);
-        }
-
-    }
-
-    private void gameOver(){
-    }
-
-    private void checkBulletCollisions(){
-        for(int i=0; i<bullets.size(); i++){
-            Asteroid collidedAsteroid = checkForCollisions(bullets.get(i));
-            if(collidedAsteroid != null){
-                remove(bullets.remove(i));
-                remove(asteroids.remove(asteroids.indexOf(collidedAsteroid)));
-                if(!(collidedAsteroid instanceof SmallAsteroid)){
-                    if(collidedAsteroid instanceof MediumAsteroid) score += 50;
-                    else score += 20;
-                    double vectorAngle = Math.random() * 360;
-                    for(int j=0; j<3; j++){
-                        Asteroid newAstro = collidedAsteroid instanceof MediumAsteroid ? new SmallAsteroid(getWidth(), getHeight()) : new MediumAsteroid(getWidth(), getHeight());
-                        newAstro.setLocation(collidedAsteroid.getX(), collidedAsteroid.getY());
-                        newAstro.rotate(vectorAngle + 120*j);
-                        if(newAstro instanceof MediumAsteroid)newAstro.increaseVelocity(1.5);
-                        else newAstro.increaseVelocity(2);
-                        asteroids.add(newAstro);
-                        add(newAstro);
-                    }
-                } else score += 100;
-            }
-        }
-    }
-
-    private void shipCollided(){
-        gameState = RESET;
-        for(int i=0; i<bullets.size(); i++){
-            remove(bullets.remove(i));
-            i--;
-        }
-        ship.resetRotation();
-        ship.setVY(0);
-        ship.setVX(0);  
-        ship.rotate(90);
-        ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()/2 - ship.getBounds().getHeight()/2);
-    }
-
-    public void updatePositions(){
-        for(Asteroid a : asteroids){
-            a.updatePosition();
-        }
-        for(int i = 0; i<bullets.size(); i++){
-
-            if(bullets.get(i).stillMoving()) bullets.get(i).updatePosition();
-            else {
-                remove(bullets.remove(i));
-            }
-        }
-        ship.updatePosition();
-    }
-
-    private Asteroid checkForCollisions(GVectorPolygon obj)
-    {
-        for (Asteroid a:asteroids)
-            if (a.getBounds().intersects(obj.getBounds()))
-            {
-                return a;
-            }
-        return null;       
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e){
-        if(gameState == GAME){
-            localizeShip(e);
-            //for(menu)
-        } else if (gameState == MENU){
-            localizeShip(e);
-        }
-    }
-
-    private void localizeShip(MouseEvent e){
-        double totalTheta;
-        double turnTheta;
-
-        if(e.getX()-ship.getX() == 0){return;}        
-        totalTheta = Math.toDegrees(Math.atan((e.getY()-ship.getY())/(e.getX()-ship.getX())));
-        if(e.getX() < ship.getX()){
-            if(e.getY() <= ship.getY())totalTheta-= 180;
-            else totalTheta +=180;
-        }     
-        turnTheta = -totalTheta-ship.getTheta();
-
-        ship.rotate(turnTheta);
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e){
-        switch(e.getKeyCode()){
-            case KeyEvent.VK_W: keyStrokes.put("VK_W", true); break;
-            case KeyEvent.VK_S: keyStrokes.put("VK_S", true); break;
-            case KeyEvent.VK_SPACE: keyStrokes.put("VK_SPACE", true); break;
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e){
-        switch(e.getKeyCode()){
-            case KeyEvent.VK_W: keyStrokes.put("VK_W", false); break;
-            case KeyEvent.VK_S: keyStrokes.put("VK_S", false); break;
-            case KeyEvent.VK_SPACE: keyStrokes.put("VK_SPACE", false); break;
-        }
-    }
-
-    public void mouseClicked(MouseEvent e){
-        if(gameState == MENU) {
-        }else if(gameState == RESET) gameState = GAME;
-    }
-
-    private void processKeyStrokes(){
-        if(gameState == GAME){
-            if(keyStrokes.get("VK_W"))ship.boost(0.5);
-            if(keyStrokes.get("VK_S"))ship.brake(-ship.getMagnitude()/20);
-            if(keyStrokes.get("VK_SPACE")){
-                if(shootingCooldown <= 0){
-                    Bullet b = ship.makeBullet();
-                    bullets.add(b);
-                    add(b);
-                    shootingCooldown = 15;
-                }
-            } shootingCooldown--;
-            
-        } else if(gameState == MENU){
-            if(keyStrokes.get("VK_SPACE")){
-                Bullet b = ship.makePointer();
-                bullets.add(b);
-                add(b);
-            }
-        }
-
     }
 }
