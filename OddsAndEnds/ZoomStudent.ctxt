@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=ZoomStudent
+comment1.params=name\ location
+comment1.target=ZoomStudent(java.lang.String,\ java.lang.String)
+comment2.params=
+comment2.target=java.lang.String\ getLocation()
+comment2.text=\r\n\ @return\ a\ string\ representing\ your\ location\r\n
+comment3.params=
+comment3.target=java.lang.String\ getName()
+comment4.params=
+comment4.target=int\ getNumMoviesWatched()
+comment5.params=otherLocation
+comment5.target=void\ setLocation(java.lang.String)
+comment5.text=\r\n\ This\ method\ changes\ where\ you\ are\ during\ Zoom\ times.\r\n\ I\ hope\ you're\ not\ in\ a\ hot\ tub.\r\n\ @param\ otherLocation\ the\ place\ you\ are\ now\r\n
+comment6.params=title
+comment6.target=void\ watchMovie(java.lang.String)
+numComments=7
