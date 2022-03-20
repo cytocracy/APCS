@@ -133,7 +133,9 @@ public class AsteroidsGame extends GraphicsProgram
                         asteroids.add(newAstro);
                         add(newAstro);
                     }
-                } else score += 100;
+                } else {
+                    score += 100;
+                }
             }
         }
     }
@@ -141,13 +143,16 @@ public class AsteroidsGame extends GraphicsProgram
     private void shipCollided(){
         ships--;
         shipsLabel.setText("Ships: " + ships);
-        if(ships == 0) gameOver();
         gameState = RESET;
         for(int i=0; i<bullets.size(); i++){
             remove(bullets.remove(i));
             i--;
         }
         resetShip();
+        notificationLabel.setText("You have " + ships + " ships remaining. Click to resume.");
+        notificationLabel.setLocation((getWidth()-notificationLabel.getWidth())/2, getHeight()/2-40);
+        add(notificationLabel);
+        if(ships == 0) gameOver();
     }
 
     private Asteroid checkForCollisions(GVectorPolygon obj)
