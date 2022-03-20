@@ -62,7 +62,6 @@ public class Asteroid extends GVectorPolygon
     }
     
     public void tick(){
-        
         double rotateAmount;
         if(rotation > 0.5 || rotation < -0.5) rotateAmount =rotation;
         else if(rotation< 0) rotateAmount = -0.5;

@@ -43,12 +43,12 @@ public class PartnerPickerC extends ConsoleProgram
         students.add("Armin Hamrah");   
         students.add("Lucy Knox");
         students.add("Aroosh Kumar");
-        students.add("Millie Muir");
-        students.add("Julia Soderbery");
+        //students.add("Millie Muir");
+        //students.add("Julia Soderbery");
         students.add("Sean Tinsley");
-        students.add("Alyssa Turenne");
+        //students.add("Alyssa Turenne");
         students.add("Bear Weigle");
-        students.add("Ella Woodhead");
+        //students.add("Ella Woodhead");
         students.add("Jerry Xu");
     }
 }
