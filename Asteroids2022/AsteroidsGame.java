@@ -133,8 +133,9 @@ public class AsteroidsGame extends GraphicsProgram
                         asteroids.add(newAstro);
                         add(newAstro);
                     }
-                } else {
+                } else  {//hit small asteroid
                     score += 100;
+                    smallBangClip.play();
                 }
             }
         }
