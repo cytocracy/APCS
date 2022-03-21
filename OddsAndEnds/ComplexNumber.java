@@ -10,6 +10,11 @@ public class ComplexNumber
         this.imagPart = imagPart;
     }
     
+    public ComplexNumber(double realPart){
+        this.realPart = realPart;
+        this.imagPart = 0;
+    }
+    
     public String toString(){
         return this.realPart + " + " + this.imagPart + "i";
     }
@@ -18,6 +23,11 @@ public class ComplexNumber
         double realResult = this.realPart + other.realPart;
         double imagResult = this.imagPart + other.imagPart;
         return new ComplexNumber(realResult, imagResult);
+    }
+    
+    public ComplexNumber add(double num){
+        ComplexNumber other = new ComplexNumber(num);
+        return this.add(other);
     }
     
     public ComplexNumber multiply(ComplexNumber other){
