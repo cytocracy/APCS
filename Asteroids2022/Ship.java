@@ -4,7 +4,7 @@ public class Ship extends GVectorPolygon
 {
     private static final int MAXSHIPSPEED = 5;
 
-    private int invincibilityTime;
+    
 
     public Ship(int windowWidth, int windowHeight)
     {
@@ -14,7 +14,7 @@ public class Ship extends GVectorPolygon
         recenter();
         setColor(Color.white);
         rotate(90);
-        invincibilityTime = 200;
+        
     }
 
     public void initVertices(){
@@ -95,13 +95,5 @@ public class Ship extends GVectorPolygon
         return b;
     }
 
-    public int incrementInvincibility(){
-        invincibilityTime--;
-        return invincibilityTime;
-    }
-
-    public void tick(){
-        return;
-    }
-
+    
 }

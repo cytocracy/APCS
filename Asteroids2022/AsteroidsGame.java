@@ -40,13 +40,15 @@ public class AsteroidsGame extends GraphicsProgram
     {
         while (true){
             pause(10);
+            System.out.println(gameState);
             if(gameState == GAME){
                 updatePositions();
-                if(ship.incrementInvincibility() < 0 && checkForCollisions(ship) != null){
+                if(checkForCollisions(ship) != null){
                     shipCollided();
+                    continue;
                 }
+                
                 checkBulletCollisions();
-                scoreLabel.setText("Score: "+score);
                 if(asteroids.size() == 0){
                     notificationLabel.setText("Level " + level + " Complete.");
                     notificationLabel.setLocation((getWidth()-notificationLabel.getWidth())/2, getHeight()/2-40);
@@ -57,6 +59,10 @@ public class AsteroidsGame extends GraphicsProgram
                         levelCooldown = 0;
                     }
                 } else processKeyStrokes();
+                
+                
+                scoreLabel.setText("Score: "+score);
+                
             } else if (gameState == MENU){
                 for(GObject obj : menuParts){
                     if(obj instanceof Asteroid){
@@ -99,6 +105,7 @@ public class AsteroidsGame extends GraphicsProgram
     private void nextLevel(){
         gameState = RESET;
         level++;
+        levelLabel.setText("Level: " + level);
 
         resetShip();
         makeAsteroids();
@@ -111,28 +118,30 @@ public class AsteroidsGame extends GraphicsProgram
     private void gameOver(){
         gameState = GAMEOVER;
         removeAll();
+        asteroids.clear();
+        bullets.clear();
         gameOverScreen();
     }
 
     private void checkBulletCollisions(){
         for(int i=0; i<bullets.size(); i++){
             Asteroid collidedAsteroid = checkForCollisions(bullets.get(i));
+
+            //hit asteroid
             if(collidedAsteroid != null){
                 remove(bullets.remove(i));
                 remove(asteroids.remove(asteroids.indexOf(collidedAsteroid)));
-                if(!(collidedAsteroid instanceof SmallAsteroid)){
-                    if(collidedAsteroid instanceof MediumAsteroid) score += 50;
-                    else score += 20;
-                    double vectorAngle = Math.random() * 360;
-                    for(int j=0; j<3; j++){
-                        Asteroid newAstro = collidedAsteroid instanceof MediumAsteroid ? new SmallAsteroid(getWidth(), getHeight()) : new MediumAsteroid(getWidth(), getHeight());
-                        newAstro.setLocation(collidedAsteroid.getX(), collidedAsteroid.getY());
-                        newAstro.rotate(vectorAngle + 120*j);
-                        if(newAstro instanceof MediumAsteroid)newAstro.increaseVelocity(1.5);
-                        else newAstro.increaseVelocity(2);
-                        asteroids.add(newAstro);
-                        add(newAstro);
+
+                if(!(collidedAsteroid instanceof SmallAsteroid)){ //regular or medium asteroid
+                    if(collidedAsteroid instanceof MediumAsteroid){
+                        score += 50;
+                        mediumBangClip.play();
+                    } 
+                    else {
+                        score += 20;
+                        smallBangClip.play();
                     }
+                    makeSmallerAsteroids(collidedAsteroid);
                 } else  {//hit small asteroid
                     score += 100;
                     smallBangClip.play();
@@ -150,7 +159,8 @@ public class AsteroidsGame extends GraphicsProgram
             i--;
         }
         resetShip();
-        notificationLabel.setText("You have " + ships + " ships remaining. Click to resume.");
+        String shipStr = ships == 1 ? "ship" : "ships";
+        notificationLabel.setText("You have " + ships + " " + shipStr + " remaining. Click to resume.");
         notificationLabel.setLocation((getWidth()-notificationLabel.getWidth())/2, getHeight()/2-40);
         add(notificationLabel);
         if(ships == 0) gameOver();
@@ -167,7 +177,20 @@ public class AsteroidsGame extends GraphicsProgram
     }
 
     //Util methods
-    public void updatePositions(){
+    private void makeSmallerAsteroids(Asteroid collidedAsteroid){
+        double vectorAngle = Math.random() * 360;
+        for(int j=0; j<3; j++){
+            Asteroid newAstro = collidedAsteroid instanceof MediumAsteroid ? new SmallAsteroid(getWidth(), getHeight()) : new MediumAsteroid(getWidth(), getHeight());
+            newAstro.setLocation(collidedAsteroid.getX(), collidedAsteroid.getY());
+            newAstro.rotate(vectorAngle + 120*j);
+            if(newAstro instanceof MediumAsteroid)newAstro.increaseVelocity(1.5);
+            else newAstro.increaseVelocity(2);
+            asteroids.add(newAstro);
+            add(newAstro);
+        }
+    }
+
+    private void updatePositions(){
         for(Asteroid a : asteroids){
             a.updatePosition();
         }
@@ -201,13 +224,23 @@ public class AsteroidsGame extends GraphicsProgram
         ship.setVX(0);  
         ship.rotate(90);
         ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()/2 - ship.getBounds().getHeight()/2);
-
     }
 
     private void initMenu(){
+        menuParts.remove(7);
+        ship = new Ship(getWidth(), getHeight());
+        ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()* 3/4 /*- ship.getBounds().getHeight()/2*/);
+        menuParts.add(ship);
+        
+        asteroids.add(aTitle);
+        asteroids.add(aPlay);
+        asteroids.add(aOptions);
+
         for(GObject obj : menuParts){
+            System.out.println("1");
             add(obj);
         }
+        //System.out.println(menuParts);
     }
 
     private void shortenLoadingBar(){
@@ -217,7 +250,10 @@ public class AsteroidsGame extends GraphicsProgram
     }
 
     private void incrementLoadingBar(){
-        if(loadingBar.getWidth() > getWidth())startGame();
+        if(loadingBar.getWidth() > getWidth()){
+            loadingBar.setText("_________");
+            startGame();
+        }
         loadingBar.setText(loadingBar.getLabel() + "_");
         loadingBar.setLocation(getWidth()/2 - loadingBar.getWidth()/2, loadingBar.getY());
     }
@@ -242,12 +278,17 @@ public class AsteroidsGame extends GraphicsProgram
         ships = 3;
         score = 0;
         levelCooldown = 0;
+        
+        bullets.clear();
+        asteroids.clear();
 
         shipsLabel.setText("Ships: " + ships);
+        levelLabel.setText("Level: " + level);
+        scoreLabel.setText("Score: " + score);
         add(scoreLabel);
         add(levelLabel);
         add(shipsLabel);
-        
+
         notificationLabel.setText("Click to start level " + level + ".");
         notificationLabel.setLocation((getWidth()-notificationLabel.getWidth())/2, getHeight()/2-40);
 
@@ -263,7 +304,23 @@ public class AsteroidsGame extends GraphicsProgram
     }
 
     private void gameOverScreen(){
+        GLabel gameOverLabel = new GLabel("Game Over!");
+        gameOverLabel.setFont("Courier-Plain-64");
+        gameOverLabel.setColor(Color.WHITE);
+        gameOverLabel.setLocation(getWidth()/2 - gameOverLabel.getWidth()/2, 100);
+        add(gameOverLabel);
 
+        GLabel stats = new GLabel("You made it to level " + level + " with a score of " + score + ".");
+        stats.setFont("Courier-Plain-22");
+        stats.setColor(Color.WHITE);
+        stats.setLocation(getWidth()/2 - stats.getWidth()/2, getHeight()/2-stats.getHeight()/2);
+        add(stats);
+
+        GLabel returnToMenu = new GLabel("Click to return to the main menu.");
+        returnToMenu.setFont("Courier-Plain-12");
+        returnToMenu.setColor(Color.WHITE);
+        returnToMenu.setLocation(getWidth()/2-returnToMenu.getWidth()/2, getHeight()/2 + 50);
+        add(returnToMenu);
     }
 
     //
@@ -312,8 +369,12 @@ public class AsteroidsGame extends GraphicsProgram
     public void mouseClicked(MouseEvent e){
         if(gameState == MENU) {
         }else if(gameState == RESET) {
-            gameState = GAME;
             remove(notificationLabel);
+            gameState = GAME;
+        } else if(gameState == GAMEOVER){
+            removeAll();
+            initMenu();
+            gameState = MENU;
         }
     }
 
@@ -360,7 +421,7 @@ public class AsteroidsGame extends GraphicsProgram
         notificationLabel.setFont("Courier-Plain-12");
         notificationLabel.setLocation((getWidth()-notificationLabel.getWidth())/2, getHeight()/2-40);
 
-        scoreLabel = new GLabel("Score: "+score);
+        scoreLabel = new GLabel("Score: "+ score);
         scoreLabel.setColor(Color.WHITE);
         scoreLabel.setFont("Courier-Plain-10");
         scoreLabel.setLocation(16, 16);
@@ -369,7 +430,7 @@ public class AsteroidsGame extends GraphicsProgram
         levelLabel.setColor(Color.WHITE);
         levelLabel.setFont("Courier-Plain-10");
         levelLabel.setLocation(80, 16);
-        
+
         shipsLabel = new GLabel("Ships: " + ships);
         shipsLabel.setColor(Color.WHITE);
         shipsLabel.setFont("Courier-Plain-10");
