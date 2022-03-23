@@ -1,4 +1,3 @@
-
 import acm.program.*;
 import acm.graphics.*;
 import java.awt.Color;
@@ -40,61 +39,64 @@ public class AsteroidsGame extends GraphicsProgram
     {
         while (true){
             pause(10);
-            System.out.println(gameState);
-            if(gameState == GAME){
-                updatePositions();
-                if(checkForCollisions(ship) != null){
-                    shipCollided();
-                    continue;
-                }
-                
-                checkBulletCollisions();
-                if(asteroids.size() == 0){
-                    notificationLabel.setText("Level " + level + " Complete.");
-                    notificationLabel.setLocation((getWidth()-notificationLabel.getWidth())/2, getHeight()/2-40);
-                    add(notificationLabel);
-                    levelCooldown++;
-                    if(levelCooldown > LEVELCOOLDOWNTIME){
-                        nextLevel();
-                        levelCooldown = 0;
-                    }
-                } else processKeyStrokes();
-                
-                
-                scoreLabel.setText("Score: "+score);
-                
-            } else if (gameState == MENU){
-                for(GObject obj : menuParts){
-                    if(obj instanceof Asteroid){
-                        Asteroid a = (Asteroid) obj;
-                        a.updatePosition();
-                    }
-                }
-                processKeyStrokes();
-                for(int i = 0; i<bullets.size(); i++){
-
-                    if(bullets.get(i).stillMoving()) {
-                        bullets.get(i).updatePosition();
-                        if(checkForCollisions(bullets.get(i)) != null){
-                            Asteroid selection = checkForCollisions(bullets.get(i));
-                            incrementLoadingBar();
-                        } 
-                    }else {
-                        remove(bullets.remove(i));
-                    }
-                }
-                if(loadingBar.getLabel().length() > 9)shortenLoadingBar();
-            } else if (gameState == RESET){
+            //System.out.println(gameState);
+            if(gameState == GAME) gameLoop();   
+            else if (gameState == MENU)menuLoop();   
+            else if (gameState == RESET){
                 for(Asteroid a : asteroids){
                     a.updatePosition();
                 }
-            } else if (gameState == GAMEOVER){
-
             }
         } 
     }
 
-    public void startGame(){
+    private void gameLoop(){
+        updatePositions();
+        if(checkForCollisions(ship) != null){
+            shipCollided();
+            return;
+        }
+
+        checkBulletCollisions();
+        if(asteroids.size() == 0){
+            notificationLabel.setText("Level " + level + " Complete.");
+            notificationLabel.setLocation((getWidth()-notificationLabel.getWidth())/2, getHeight()/2-40);
+            add(notificationLabel);
+            levelCooldown++;
+            if(levelCooldown > LEVELCOOLDOWNTIME){
+                nextLevel();
+                levelCooldown = 0;
+            }
+        } else processKeyStrokes();
+
+        scoreLabel.setText("Score: "+score);
+    }
+
+    private void menuLoop(){
+        for(GObject obj : menuParts){
+            if(obj instanceof Asteroid){
+                Asteroid a = (Asteroid) obj;
+                a.updatePosition();
+            }
+        }
+        processKeyStrokes();
+        for(int i = 0; i<bullets.size(); i++){
+
+            if(bullets.get(i).stillMoving()) {
+                bullets.get(i).updatePosition();
+                if(checkForCollisions(bullets.get(i)) != null){
+                    Asteroid selection = checkForCollisions(bullets.get(i));
+                    remove(bullets.remove(i));
+                    incrementLoadingBar();
+                } 
+            }else {
+                remove(bullets.remove(i));
+            }
+        }
+        if(!keyStrokes.get("SPACE") && loadingBar.getLabel().length() > 9)shortenLoadingBar();
+    }
+
+    private void startGame(){
         gameState = RESET;
         removeAll();
         asteroids.clear();
@@ -133,13 +135,13 @@ public class AsteroidsGame extends GraphicsProgram
                 remove(asteroids.remove(asteroids.indexOf(collidedAsteroid)));
 
                 if(!(collidedAsteroid instanceof SmallAsteroid)){ //regular or medium asteroid
-                    if(collidedAsteroid instanceof MediumAsteroid){
+                    if(collidedAsteroid instanceof MediumAsteroid){ //medium asteroid
                         score += 50;
                         mediumBangClip.play();
                     } 
-                    else {
+                    else { //regular asteroid
                         score += 20;
-                        smallBangClip.play();
+                        bigBangClip.play();
                     }
                     makeSmallerAsteroids(collidedAsteroid);
                 } else  {//hit small asteroid
@@ -231,7 +233,7 @@ public class AsteroidsGame extends GraphicsProgram
         ship = new Ship(getWidth(), getHeight());
         ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()* 3/4 /*- ship.getBounds().getHeight()/2*/);
         menuParts.add(ship);
-        
+
         asteroids.add(aTitle);
         asteroids.add(aPlay);
         asteroids.add(aOptions);
@@ -246,7 +248,6 @@ public class AsteroidsGame extends GraphicsProgram
     private void shortenLoadingBar(){
         loadingBar.setText(loadingBar.getLabel().substring(1));
         loadingBar.setLocation(getWidth()/2 - loadingBar.getWidth()/2, loadingBar.getY());
-
     }
 
     private void incrementLoadingBar(){
@@ -278,7 +279,7 @@ public class AsteroidsGame extends GraphicsProgram
         ships = 3;
         score = 0;
         levelCooldown = 0;
-        
+
         bullets.clear();
         asteroids.clear();
 
@@ -305,19 +306,19 @@ public class AsteroidsGame extends GraphicsProgram
 
     private void gameOverScreen(){
         GLabel gameOverLabel = new GLabel("Game Over!");
-        gameOverLabel.setFont("Courier-Plain-64");
+        gameOverLabel.setFont("Helvetica-Plain-64");
         gameOverLabel.setColor(Color.WHITE);
         gameOverLabel.setLocation(getWidth()/2 - gameOverLabel.getWidth()/2, 100);
         add(gameOverLabel);
 
         GLabel stats = new GLabel("You made it to level " + level + " with a score of " + score + ".");
-        stats.setFont("Courier-Plain-22");
+        stats.setFont("Helvetica-Plain-22");
         stats.setColor(Color.WHITE);
         stats.setLocation(getWidth()/2 - stats.getWidth()/2, getHeight()/2-stats.getHeight()/2);
         add(stats);
 
         GLabel returnToMenu = new GLabel("Click to return to the main menu.");
-        returnToMenu.setFont("Courier-Plain-12");
+        returnToMenu.setFont("Helvetica-Plain-12");
         returnToMenu.setColor(Color.WHITE);
         returnToMenu.setLocation(getWidth()/2-returnToMenu.getWidth()/2, getHeight()/2 + 50);
         add(returnToMenu);
@@ -330,9 +331,11 @@ public class AsteroidsGame extends GraphicsProgram
 
     private void initKeyStrokes(){
         String[] keys = {
-                "VK_W",
-                "VK_S",
-                "VK_SPACE",
+                "W",
+                "S",
+                "A",
+                "D",
+                "SPACE",
             };
 
         for(String key : keys){
@@ -342,19 +345,41 @@ public class AsteroidsGame extends GraphicsProgram
 
     @Override
     public void keyPressed(KeyEvent e){
+
+        //ik you don't like switch cases but this seemed like a somewhat reasonable use
         switch(e.getKeyCode()){
-            case KeyEvent.VK_W: keyStrokes.put("VK_W", true); break;
-            case KeyEvent.VK_S: keyStrokes.put("VK_S", true); break;
-            case KeyEvent.VK_SPACE: keyStrokes.put("VK_SPACE", true); break;
+            case KeyEvent.VK_W: keyStrokes.put("W", true); break;
+            case KeyEvent.VK_UP: keyStrokes.put("W", true); break;
+
+            case KeyEvent.VK_S: keyStrokes.put("S", true); break;
+            case KeyEvent.VK_DOWN: keyStrokes.put("S", true); break;
+
+            case KeyEvent.VK_A: keyStrokes.put("A", true); break;
+            case KeyEvent.VK_LEFT: keyStrokes.put("A", true); break;
+
+            case KeyEvent.VK_D: keyStrokes.put("D", true); break;
+            case KeyEvent.VK_RIGHT: keyStrokes.put("D", true); break;
+
+            case KeyEvent.VK_SPACE: keyStrokes.put("SPACE", true); break;
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e){
         switch(e.getKeyCode()){
-            case KeyEvent.VK_W: keyStrokes.put("VK_W", false); break;
-            case KeyEvent.VK_S: keyStrokes.put("VK_S", false); break;
-            case KeyEvent.VK_SPACE: keyStrokes.put("VK_SPACE", false); break;
+            case KeyEvent.VK_W: keyStrokes.put("W", false); break;
+            case KeyEvent.VK_UP: keyStrokes.put("W", false); break;
+
+            case KeyEvent.VK_S: keyStrokes.put("S", false); break;
+            case KeyEvent.VK_DOWN: keyStrokes.put("S", false); break;
+
+            case KeyEvent.VK_A: keyStrokes.put("A", false); break;
+            case KeyEvent.VK_LEFT: keyStrokes.put("A", false); break;
+
+            case KeyEvent.VK_D: keyStrokes.put("D", false); break;
+            case KeyEvent.VK_RIGHT: keyStrokes.put("D", false); break;
+
+            case KeyEvent.VK_SPACE: keyStrokes.put("SPACE", false); break;
         }
     }
 
@@ -380,22 +405,32 @@ public class AsteroidsGame extends GraphicsProgram
 
     private void processKeyStrokes(){
         if(gameState == GAME){
-            if(keyStrokes.get("VK_W"))ship.boost(0.5);
-            if(keyStrokes.get("VK_S"))ship.brake(-ship.getMagnitude()/20);
-            if(keyStrokes.get("VK_SPACE")){
+            if(keyStrokes.get("W")){
+                ship.boost(0.5);
+                thrustClip.play();
+            }
+            if(keyStrokes.get("S"))ship.brake(-ship.getMagnitude()/20);
+            if(keyStrokes.get("SPACE")){
                 if(shootingCooldown <= 0){
                     Bullet b = ship.makeBullet();
                     bullets.add(b);
                     add(b);
                     shootingCooldown = SHOOTINGCOOLDOWNTIME;
+                    thrustClip.play();
                 }
-            } shootingCooldown--;
+            }
+            if(keyStrokes.get("A")) ship.rotate(5);
+            if(keyStrokes.get("D")) ship.rotate(-5);
+            shootingCooldown--;
         } else if(gameState == MENU){
-            if(keyStrokes.get("VK_SPACE")){
+            if(keyStrokes.get("SPACE")){
                 Bullet b = ship.makePointer();
                 bullets.add(b);
                 add(b);
             }
+            if(keyStrokes.get("A")) ship.rotate(5);
+            if(keyStrokes.get("D")) ship.rotate(-5);
+
         }
     }
 
@@ -429,12 +464,12 @@ public class AsteroidsGame extends GraphicsProgram
         levelLabel = new GLabel("Level: " + level);
         levelLabel.setColor(Color.WHITE);
         levelLabel.setFont("Courier-Plain-10");
-        levelLabel.setLocation(80, 16);
+        levelLabel.setLocation(getWidth()-100, 16);
 
         shipsLabel = new GLabel("Ships: " + ships);
         shipsLabel.setColor(Color.WHITE);
         shipsLabel.setFont("Courier-Plain-10");
-        shipsLabel.setLocation(140, 16);
+        shipsLabel.setLocation(getWidth()-50, 16);
 
         menuParts = new ArrayList<GObject>();
         loadingBar = new GLabel("_________");
