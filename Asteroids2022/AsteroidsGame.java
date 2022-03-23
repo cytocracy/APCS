@@ -229,17 +229,16 @@ public class AsteroidsGame extends GraphicsProgram
     }
 
     private void initMenu(){
-        menuParts.remove(7);
+        menuParts.remove(5);
         ship = new Ship(getWidth(), getHeight());
         ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()* 3/4 /*- ship.getBounds().getHeight()/2*/);
         menuParts.add(ship);
 
         asteroids.add(aTitle);
         asteroids.add(aPlay);
-        asteroids.add(aOptions);
+        //asteroids.add(aOptions);
 
         for(GObject obj : menuParts){
-            System.out.println("1");
             add(obj);
         }
         //System.out.println(menuParts);
@@ -488,26 +487,21 @@ public class AsteroidsGame extends GraphicsProgram
         menuParts.add(tTitle);
 
         aPlay = new MediumAsteroid(getWidth(), getHeight());
-        aPlay.setLocation(getWidth()/3, getHeight()/2);
+        aPlay.setLocation(getWidth()/2, getHeight()/2);
         asteroids.add(aPlay);
         menuParts.add(aPlay);
 
-        aOptions = new MediumAsteroid(getWidth(), getHeight());
+        /*aOptions = new MediumAsteroid(getWidth(), getHeight());
         aOptions.setLocation(getWidth() * 2.0/3, getHeight()/2);
         asteroids.add(aOptions);
-        menuParts.add(aOptions);
+        menuParts.add(aOptions);*/
 
         GLabel tPlay = new GLabel("Play");
         tPlay.setFont("Helvetica-Bold-10");
         tPlay.setColor(Color.white);
-        tPlay.setLocation(getWidth()/3 - tPlay.getWidth()/2, getHeight()/2/*-tPlay.getHeight()/2*/);
+        tPlay.setLocation(getWidth()/2 - tPlay.getWidth()/2, getHeight()/2/*-tPlay.getHeight()/2*/);
         menuParts.add(tPlay);
 
-        GLabel tOptions = new GLabel("Options");
-        tOptions.setFont("Helvetica-Bold-10");
-        tOptions.setColor(Color.white);
-        tOptions.setLocation(getWidth() * 2.0/3 - tOptions.getWidth()/2, getHeight()/2 /*- tOptions.getHeight()/2*/);
-        menuParts.add(tOptions);
 
         ship = new Ship(getWidth(), getHeight());
 
