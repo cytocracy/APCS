@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=Tree
+comment1.params=
+comment1.target=void\ run()
+comment2.params=x\ y\ len\ angle
+comment2.target=void\ branch(double,\ double,\ double,\ double)
+numComments=3

@@ -28,7 +28,7 @@ public class AsteroidsGame extends GraphicsProgram
 
     private ArrayList<GObject> menuParts;
     private GLabel notificationLabel, scoreLabel, levelLabel, shipsLabel, loadingBar;
-    private Asteroid aPlay, aOptions, aTitle;
+    private Asteroid aPlay, aTitle;
     private AudioClip thrustClip, fireClip, bigBangClip, mediumBangClip, smallBangClip;
 
     //
@@ -39,7 +39,6 @@ public class AsteroidsGame extends GraphicsProgram
     {
         while (true){
             pause(10);
-            //System.out.println(gameState);
             if(gameState == GAME) gameLoop();   
             else if (gameState == MENU)menuLoop();   
             else if (gameState == RESET){
@@ -81,7 +80,6 @@ public class AsteroidsGame extends GraphicsProgram
         }
         processKeyStrokes();
         for(int i = 0; i<bullets.size(); i++){
-
             if(bullets.get(i).stillMoving()) {
                 bullets.get(i).updatePosition();
                 if(checkForCollisions(bullets.get(i)) != null){
@@ -114,7 +112,6 @@ public class AsteroidsGame extends GraphicsProgram
 
         notificationLabel.setText("Click to start level " + level + ".");
         notificationLabel.setLocation((getWidth()-notificationLabel.getWidth())/2, getHeight()/2-40);
-
     }
 
     private void gameOver(){
@@ -134,7 +131,7 @@ public class AsteroidsGame extends GraphicsProgram
                 remove(bullets.remove(i));
                 remove(asteroids.remove(asteroids.indexOf(collidedAsteroid)));
 
-                if(!(collidedAsteroid instanceof SmallAsteroid)){ //regular or medium asteroid
+                if(!(collidedAsteroid instanceof SmallAsteroid)){ //regular or medium asteroid (need to make another)
                     if(collidedAsteroid instanceof MediumAsteroid){ //medium asteroid
                         score += 50;
                         mediumBangClip.play();
@@ -178,6 +175,7 @@ public class AsteroidsGame extends GraphicsProgram
         return null;       
     }
 
+    //
     //Util methods
     private void makeSmallerAsteroids(Asteroid collidedAsteroid){
         double vectorAngle = Math.random() * 360;
@@ -236,12 +234,10 @@ public class AsteroidsGame extends GraphicsProgram
 
         asteroids.add(aTitle);
         asteroids.add(aPlay);
-        //asteroids.add(aOptions);
-
+        
         for(GObject obj : menuParts){
             add(obj);
         }
-        //System.out.println(menuParts);
     }
 
     private void shortenLoadingBar(){
@@ -296,10 +292,8 @@ public class AsteroidsGame extends GraphicsProgram
 
         makeAsteroids();
         ship = new Ship(getWidth(), getHeight());
-
         ship.setLocation(getWidth()/2 - ship.getBounds().getWidth()/2, getHeight()/2 - ship.getBounds().getHeight()/2);
         add(ship);
-
         shootingCooldown = 50;
     }
 
@@ -347,16 +341,16 @@ public class AsteroidsGame extends GraphicsProgram
 
         //ik you don't like switch cases but this seemed like a somewhat reasonable use
         switch(e.getKeyCode()){
-            case KeyEvent.VK_W: keyStrokes.put("W", true); break;
+            case KeyEvent.VK_W: 
             case KeyEvent.VK_UP: keyStrokes.put("W", true); break;
 
-            case KeyEvent.VK_S: keyStrokes.put("S", true); break;
+            case KeyEvent.VK_S: 
             case KeyEvent.VK_DOWN: keyStrokes.put("S", true); break;
 
-            case KeyEvent.VK_A: keyStrokes.put("A", true); break;
+            case KeyEvent.VK_A: 
             case KeyEvent.VK_LEFT: keyStrokes.put("A", true); break;
 
-            case KeyEvent.VK_D: keyStrokes.put("D", true); break;
+            case KeyEvent.VK_D: 
             case KeyEvent.VK_RIGHT: keyStrokes.put("D", true); break;
 
             case KeyEvent.VK_SPACE: keyStrokes.put("SPACE", true); break;
@@ -366,16 +360,16 @@ public class AsteroidsGame extends GraphicsProgram
     @Override
     public void keyReleased(KeyEvent e){
         switch(e.getKeyCode()){
-            case KeyEvent.VK_W: keyStrokes.put("W", false); break;
+            case KeyEvent.VK_W: 
             case KeyEvent.VK_UP: keyStrokes.put("W", false); break;
 
-            case KeyEvent.VK_S: keyStrokes.put("S", false); break;
+            case KeyEvent.VK_S: 
             case KeyEvent.VK_DOWN: keyStrokes.put("S", false); break;
 
-            case KeyEvent.VK_A: keyStrokes.put("A", false); break;
+            case KeyEvent.VK_A: 
             case KeyEvent.VK_LEFT: keyStrokes.put("A", false); break;
 
-            case KeyEvent.VK_D: keyStrokes.put("D", false); break;
+            case KeyEvent.VK_D: 
             case KeyEvent.VK_RIGHT: keyStrokes.put("D", false); break;
 
             case KeyEvent.VK_SPACE: keyStrokes.put("SPACE", false); break;
@@ -391,8 +385,7 @@ public class AsteroidsGame extends GraphicsProgram
     }
 
     public void mouseClicked(MouseEvent e){
-        if(gameState == MENU) {
-        }else if(gameState == RESET) {
+        if(gameState == RESET) {
             remove(notificationLabel);
             gameState = GAME;
         } else if(gameState == GAMEOVER){
@@ -402,10 +395,10 @@ public class AsteroidsGame extends GraphicsProgram
         }
     }
 
-    private void processKeyStrokes(){
-        if(gameState == GAME){
+    private void processKeyStrokes(){   
+        if(gameState == GAME){ 
             if(keyStrokes.get("W")){
-                ship.boost(0.5);
+                ship.boost(0.3);
                 thrustClip.play();
             }
             if(keyStrokes.get("S"))ship.brake(-ship.getMagnitude()/20);
@@ -429,7 +422,6 @@ public class AsteroidsGame extends GraphicsProgram
             }
             if(keyStrokes.get("A")) ship.rotate(5);
             if(keyStrokes.get("D")) ship.rotate(-5);
-
         }
     }
 
@@ -491,17 +483,11 @@ public class AsteroidsGame extends GraphicsProgram
         asteroids.add(aPlay);
         menuParts.add(aPlay);
 
-        /*aOptions = new MediumAsteroid(getWidth(), getHeight());
-        aOptions.setLocation(getWidth() * 2.0/3, getHeight()/2);
-        asteroids.add(aOptions);
-        menuParts.add(aOptions);*/
-
         GLabel tPlay = new GLabel("Play");
         tPlay.setFont("Helvetica-Bold-10");
         tPlay.setColor(Color.white);
         tPlay.setLocation(getWidth()/2 - tPlay.getWidth()/2, getHeight()/2/*-tPlay.getHeight()/2*/);
         menuParts.add(tPlay);
-
 
         ship = new Ship(getWidth(), getHeight());
 

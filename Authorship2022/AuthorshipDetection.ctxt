@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=AuthorshipDetection
+comment1.params=
+comment1.target=void\ run()
+comment2.params=fileContents
+comment2.target=java.util.ArrayList\ getSentencesFromContents(java.lang.String)
+comment3.params=sentence
+comment3.target=java.util.ArrayList\ getWordsFromSentence(java.lang.String)
+comment4.params=word
+comment4.target=java.lang.String\ clean(java.lang.String)
+comment5.params=sentences
+comment5.target=java.util.ArrayList\ getAllWordsFromSentences(java.util.ArrayList)
+comment6.params=
+comment6.target=void\ loadAuthorSignatures()
+numComments=7

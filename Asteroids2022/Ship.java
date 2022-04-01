@@ -2,7 +2,7 @@ import java.awt.Color;
 
 public class Ship extends GVectorPolygon
 {
-    private static final int MAXSHIPSPEED = 3;
+    private static final int MAXSHIPSPEED = 2;
 
     
 
