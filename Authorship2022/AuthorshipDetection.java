@@ -17,13 +17,22 @@ public class AuthorshipDetection extends ConsoleProgram
         
         ArrayList<String> sentences = getSentencesFromContents(fileContents);
         ArrayList<String> words = getAllWordsFromSentences(sentences);
-        //ArrayList<String> cleanWords = new ArrayList<String>();
-        /*for(int i=0; i<words.size(); i++){
+        ArrayList<String> cleanWords = new ArrayList<String>();
+        for(int i=0; i<words.size(); i++){
             if(clean(words.get(i)) != null) cleanWords.add(clean(words.get(i)));
-        }*/
+        }
         //println("Number of sentences = " + sentences.size());
-        for (int i=0; i<1000; i++)
-            println(words.get(i));
+        double wordLength = computeAverageWordLength(cleanWords);
+        double diffWordRatio = computeDifferentWordRatio(cleanWords);
+        double hapaxRatio = computeHapaxLegomannaRatio(cleanWords);
+        double sentenceLength = computeAverageWordsPerSentence(sentences); 
+        //for (int i=0; i<1000; i++)
+          //  println(cleanWords.get(i));
+            
+        println("Average word length: " + wordLength);
+        println("Diff word ratio: " + diffWordRatio);
+        println("Hapax ratio: " + hapaxRatio);
+        println("Avg sentence length: " + sentenceLength);
     }
 
     // you'll do tasks #2 through #12 here
@@ -85,6 +94,52 @@ public class AuthorshipDetection extends ConsoleProgram
             for(int j = 0; j<words.size(); j++) result.add(words.get(j));
         }
         return result;
+    }
+    
+    private double computeAverageWordLength(ArrayList<String> words){
+        int totalLetters = 0;
+        for(String word: words){
+            totalLetters += word.length();
+        }
+        double result = 1.0 * totalLetters/words.size();
+        return result;
+    }
+    
+    private double computeDifferentWordRatio(ArrayList<String> words){
+        ArrayList<String> uniqueWords = new ArrayList<String>();
+        for(String word: words){
+            boolean isUnique = true;
+            for(String uniqueWord : uniqueWords){
+                if(word.equals(uniqueWord)) isUnique= false;
+            }
+            if(isUnique) uniqueWords.add(word);
+            
+        }
+        double ratio = 1.0 * uniqueWords.size() / words.size();
+        return ratio;
+    }
+    
+    private double computeHapaxLegomannaRatio(ArrayList<String> words){
+        ArrayList<String> once = new ArrayList<String>();
+        ArrayList<String> twice = new ArrayList<String>();
+        for(String w: words){
+            if(!once.contains(w)) once.add(w);
+            else if(!twice.contains(w)) twice.add(w);
+        }
+        return 1.0 *(once.size()-twice.size())/words.size();
+    }
+    
+    private double computeAverageWordsPerSentence(ArrayList<String> sentences){
+        int totalWords = 0;
+        for(String sentence : sentences){
+            totalWords += getWordsFromSentence(sentence).size();
+        }
+        double average = 1.0 * totalWords/sentences.size();
+        return average;
+    }
+    
+    private double computeSentenceComplexity(ArrayList<String> sentences){
+        return 0;
     }
     
     // I wrote this method for you
