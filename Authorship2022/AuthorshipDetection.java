@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class AuthorshipDetection extends ConsoleProgram
 {
     private static final String PUNCTUATION = "'!\",;:.-?)([]<>*#\n\t\r ";
+    private static final String PHRASES = ":;,";
     private static final double[] WEIGHT = {11.0, 33.0, 50.0, 0.4, 4.0};
     private AuthorSignature[] authors;
 
@@ -18,21 +19,42 @@ public class AuthorshipDetection extends ConsoleProgram
         ArrayList<String> sentences = getSentencesFromContents(fileContents);
         ArrayList<String> words = getAllWordsFromSentences(sentences);
         ArrayList<String> cleanWords = new ArrayList<String>();
-        for(int i=0; i<words.size(); i++){
-            if(clean(words.get(i)) != null) cleanWords.add(clean(words.get(i)));
-        }
-        //println("Number of sentences = " + sentences.size());
-        double wordLength = computeAverageWordLength(cleanWords);
-        double diffWordRatio = computeDifferentWordRatio(cleanWords);
-        double hapaxRatio = computeHapaxLegomannaRatio(cleanWords);
-        double sentenceLength = computeAverageWordsPerSentence(sentences); 
-        //for (int i=0; i<1000; i++)
-          //  println(cleanWords.get(i));
+        
+        println();
+        
+        double wordLength = computeAverageWordLength(words);
+        double diffWordRatio = computeDifferentWordRatio(words);
+        double hapaxRatio = computeHapaxLegomannaRatio(words);
+        double sentenceLength = computeAverageWordsPerSentence(sentences);
+        double sentenceComplexity = computeSentenceComplexity(sentences);
+        println("\tWords = " + words.size());
+        println("\tSentences = " + sentences.size());
+        println("\tAvg word length = " + wordLength);
+        println("\tDiff word ratio = " + diffWordRatio);
+        println("\tHapax ratio = " + hapaxRatio);
+        println("\tAvg sentence length = " +sentenceLength);
+        println("\tSentence complexity = " + sentenceComplexity);
+        println();
+        AuthorSignature unknown = new AuthorSignature("Unknown", wordLength, diffWordRatio, hapaxRatio, sentenceLength, sentenceComplexity);
+        
+        int champIndex=0;
+        double champScore = computeScore(unknown, authors[0]);
+        for(int i=1; i<authors.length; i++){
+            double score = computeScore(unknown, authors[i]);
+            println(authors[i].getAuthorName()+": " + score);
             
-        println("Average word length: " + wordLength);
-        println("Diff word ratio: " + diffWordRatio);
-        println("Hapax ratio: " + hapaxRatio);
-        println("Avg sentence length: " + sentenceLength);
+            if(score < champScore){
+                champIndex = i;
+                champScore = score;
+            }
+        }
+        println();
+        String champAuthor = authors[champIndex].getAuthorName();
+        
+        println("Predicted author = " + champAuthor);
+        
+        
+        
     }
 
     // you'll do tasks #2 through #12 here
@@ -61,13 +83,16 @@ public class AuthorshipDetection extends ConsoleProgram
             String symbol = sentence.substring(i, i+1);
             if(symbol.equals(" ")){
                 String word = sentence.substring(wordStart, i);
-                if(clean(word) != null) result.add(clean(word));
+                String cleanedWord = clean(word);
+                if(cleanedWord != null) result.add(cleanedWord);
                 wordStart = i+1;
             }
         }
         if(wordStart < sentence.length()-1){
             String word = sentence.substring(wordStart);
-            result.add(word);
+            word = clean(word);
+            if(word != null)
+                result.add(word);
         }
         return result;
     }
@@ -113,7 +138,6 @@ public class AuthorshipDetection extends ConsoleProgram
                 if(word.equals(uniqueWord)) isUnique= false;
             }
             if(isUnique) uniqueWords.add(word);
-            
         }
         double ratio = 1.0 * uniqueWords.size() / words.size();
         return ratio;
@@ -139,7 +163,27 @@ public class AuthorshipDetection extends ConsoleProgram
     }
     
     private double computeSentenceComplexity(ArrayList<String> sentences){
-        return 0;
+        int totalPhrases = 0;
+        for(String sentence : sentences){
+            totalPhrases++;
+            for(int i=0; i<sentence.length(); i++){
+                String symbol = sentence.substring(i, i+1);
+                if(PHRASES.indexOf(sentence.substring(i, i+1)) >=0){
+                    totalPhrases++;
+                }
+            }
+        }
+        return 1.0 * totalPhrases/sentences.size();
+    }
+    
+    private double computeScore(AuthorSignature first, AuthorSignature second){
+        double a = Math.abs(first.getAvgWordLength()-second.getAvgWordLength()) * WEIGHT[0];
+        double b = Math.abs(first.getDifferentWordRatio()-second.getDifferentWordRatio()) * WEIGHT[1];
+        double c = Math.abs(first.getHapaxRatio()-second.getHapaxRatio()) * WEIGHT[2];
+        double d = Math.abs(first.getAvgWordsPerSentence()-second.getAvgWordsPerSentence()) * WEIGHT[3];
+        double e = Math.abs(first.getAvgPhrasesPerSentence()-second.getAvgPhrasesPerSentence()) * WEIGHT[4];
+        
+        return a + b + c + d + e;
     }
     
     // I wrote this method for you
