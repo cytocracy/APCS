@@ -1,5 +1,4 @@
-
-import acm.program.*;
+    import acm.program.*;
 import java.util.ArrayList;
 
 public class AuthorshipDetection extends ConsoleProgram
@@ -52,9 +51,6 @@ public class AuthorshipDetection extends ConsoleProgram
         String champAuthor = authors[champIndex].getAuthorName();
         
         println("Predicted author = " + champAuthor);
-        
-        
-        
     }
 
     // you'll do tasks #2 through #12 here
